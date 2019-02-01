@@ -4,9 +4,7 @@ const del = require('del');
 const Parcel = require('parcel-bundler');
 
 function clean() {
-  return del([
-    'build/'
-  ]);
+  return del(['build/']);
 }
 
 function buildBackground() {
@@ -20,8 +18,7 @@ function buildBackground() {
 }
 
 function buildManifest() {
-  return src('src/manifest.json')
-    .pipe(dest('build/'));
+  return src('src/manifest.json').pipe(dest('build/'));
 }
 
 exports.default = series(clean, parallel(buildBackground, buildManifest));

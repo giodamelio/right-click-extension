@@ -1,10 +1,8 @@
 {
-    "manifest_version": 2,
-    "name": "Right Click",
-    "description": "An extension to allow custom searches based on selected text",
-    "version": "0.1.0",
-    "permissions": [],
-    "background": {
-        "scripts": ["background.js"]
-    }
+  "manifest_version": 2,
+  "name": "Right Click",
+  "description": "An extension to allow custom searches based on selected text",
+  "version": "0.1.0",
+  "permissions": [],
+  "background": { "scripts": ["background.js"] }
 }
