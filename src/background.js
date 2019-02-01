@@ -7,11 +7,15 @@ browser.menus.onShown.addListener((info, tab) => {
   return browser.storage.local.get('openers').then(({ openers }) => {
     // Make a menu item for each opener
     openers.forEach(opener => {
-      browser.menus.create({
-        id: opener.name,
-        title: opener.name,
-        contexts: ['selection']
-      });
+      // If the opener has a regex property, only show the menu if the selected text matches it
+      const regex = new RegExp(decodeURIComponent(opener.regex || '.*'));
+      if (regex.test(info.selectionText)) {
+        browser.menus.create({
+          id: opener.name,
+          title: opener.name,
+          contexts: ['selection']
+        });
+      }
     });
 
     // Create the seperator and options item

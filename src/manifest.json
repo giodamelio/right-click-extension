@@ -3,7 +3,7 @@
   "name": "Right Click",
   "description": "An extension to allow custom searches based on selected text",
   "version": "0.1.0",
-  "permissions": ["menus", "storage"],
+  "permissions": ["menus", "storage", "<all_urls>"],
   "background": { "scripts": ["background.js"] },
   "options_ui": {
     "page": "options/options.html"
