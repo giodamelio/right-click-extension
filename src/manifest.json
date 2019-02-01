@@ -4,5 +4,8 @@
   "description": "An extension to allow custom searches based on selected text",
   "version": "0.1.0",
   "permissions": ["menus"],
-  "background": { "scripts": ["background.js"] }
+  "background": { "scripts": ["background.js"] },
+  "options_ui": {
+    "page": "options/options.html"
+  }
 }

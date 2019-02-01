@@ -14,6 +14,23 @@ browser.menus.create({
   contexts: ['selection']
 });
 
+browser.menus.create({
+  id: 'separator-1',
+  type: 'separator',
+  contexts: ['selection']
+});
+
+browser.menus.create({
+  id: 'special:open_options',
+  title: 'Options',
+  contexts: ['selection']
+});
+
 browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
+
+  // Open the options panel
+  if (info.menuItemId === 'special:open_options') {
+    browser.runtime.openOptionsPage();
+  }
 });

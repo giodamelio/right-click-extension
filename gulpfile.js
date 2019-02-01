@@ -21,6 +21,7 @@ function buildBackground() {
 function buildOptions() {
   const options = {
     outDir: './build/options',
+    publicUrl: './',
     watch: false,
     logLevel: 1
   };
