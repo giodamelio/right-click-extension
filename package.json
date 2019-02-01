@@ -23,5 +23,8 @@
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
     "parcel-bundler": "^1.11.0"
+  },
+  "dependencies": {
+    "webextension-polyfill": "^0.3.1"
   }
 }
