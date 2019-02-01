@@ -10,9 +10,21 @@ function clean() {
 function buildBackground() {
   const options = {
     outDir: './build',
-    watch: false
+    watch: false,
+    logLevel: 1
   };
   const bundler = new Parcel('src/background.js', options);
+
+  return bundler.bundle();
+}
+
+function buildOptions() {
+  const options = {
+    outDir: './build/options',
+    watch: false,
+    logLevel: 1
+  };
+  const bundler = new Parcel('src/options/options.html', options);
 
   return bundler.bundle();
 }
@@ -21,5 +33,8 @@ function buildManifest() {
   return src('src/manifest.json').pipe(dest('build/'));
 }
 
-exports.default = series(clean, parallel(buildBackground, buildManifest));
-exports.build = parallel(buildBackground, buildManifest);
+exports.default = series(
+  clean,
+  series(buildBackground, buildManifest, buildOptions)
+);
+exports.build = series(buildBackground, buildManifest, buildOptions);
