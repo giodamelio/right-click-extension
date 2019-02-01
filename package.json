@@ -28,6 +28,11 @@
     "web-ext": "^2.9.3"
   },
   "dependencies": {
+    "@date-io/date-fns": "^1.0.2",
+    "@material-ui/core": "^3.9.1",
+    "material-ui-pickers": "^2.1.2",
+    "mson": "^1.2.0",
+    "mson-react": "^1.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "webextension-polyfill": "^0.3.1"
