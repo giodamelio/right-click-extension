@@ -1,6 +1,7 @@
-const { series } = require('gulp');
+const { series, src, dest } = require('gulp');
 const log = require('fancy-log');
 const del = require('del');
+const Parcel = require('parcel-bundler');
 
 function clean() {
   return del([
@@ -8,8 +9,14 @@ function clean() {
   ]);
 }
 
-function build(cb) {
-  cb();
+function buildBackground() {
+  const options = {
+    outDir: './build',
+    watch: false
+  };
+  const bundler = new Parcel('src/background.js', options);
+
+  return bundler.bundle();
 }
 
-exports.default = series(clean, build);
+exports.default = series(clean, buildBackground);
