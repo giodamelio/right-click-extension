@@ -1,34 +1,58 @@
 const browser = require('webextension-polyfill');
+const util = require('util');
 
-browser.menus.create({
-  id: 'test1',
-  title: 'Test 1',
-  contexts: ['selection']
-});
+browser.menus.onShown.addListener((info, tab) => {
+  browser.menus.removeAll();
 
-browser.menus.create({
-  id: 'test2',
-  title: 'Test 2',
-  contexts: ['selection']
-});
+  return browser.storage.local.get('openers').then(({ openers }) => {
+    // Make a menu item for each opener
+    openers.forEach(opener => {
+      browser.menus.create({
+        id: opener.name,
+        title: opener.name,
+        contexts: ['selection']
+      });
+    });
 
-browser.menus.create({
-  id: 'separator-1',
-  type: 'separator',
-  contexts: ['selection']
-});
+    // Create the seperator and options item
+    browser.menus.create({
+      id: 'separator-1',
+      type: 'separator',
+      contexts: ['selection']
+    });
+    browser.menus.create({
+      id: 'special:open_options',
+      title: 'Options',
+      contexts: ['selection']
+    });
 
-browser.menus.create({
-  id: 'special:open_options',
-  title: 'Options',
-  contexts: ['selection']
+    browser.menus.refresh();
+  });
 });
 
 browser.menus.onClicked.addListener((info, tab) => {
   console.log(info);
 
-  // Open the options panel
-  if (info.menuItemId === 'special:open_options') {
-    browser.runtime.openOptionsPage();
-  }
+  return browser.storage.local.get('openers').then(({ openers }) => {
+    // Build lookup hash by name
+    const lookup = openers.reduce((l, opener) => {
+      l[opener.name] = opener;
+      return l;
+    }, {});
+
+    const opener = lookup[info.menuItemId];
+    if (opener) {
+      console.log('Opening with:', opener.name);
+      const url = util.format(opener.url, info.selectionText);
+      browser.tabs.create({
+        active: true,
+        url
+      });
+    }
+
+    // Open the options panel
+    if (info.menuItemId === 'special:open_options') {
+      browser.runtime.openOptionsPage();
+    }
+  });
 });
