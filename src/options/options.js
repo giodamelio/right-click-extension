@@ -24,6 +24,12 @@ const definition = {
       label: 'Save',
       type: 'submit',
       icon: 'save'
+    },
+    {
+      name: 'format',
+      component: 'ButtonField',
+      label: 'Format',
+      icon: 'filter_vintage'
     }
   ]
 };
@@ -32,6 +38,17 @@ const options = (
   <Mson
     definition={definition}
     onMount={({ component }) => {
+      component.on('format', () => {
+        console.log('Formatting options');
+        component.setValues({
+          jsonOpeners: JSON.stringify(
+            JSON.parse(component.getValues().jsonOpeners),
+            null,
+            2
+          )
+        });
+      });
+
       return browser.storage.local.get('openers').then(({ openers }) => {
         console.log('Loading options:', openers);
         component.setValues({
