@@ -22,3 +22,4 @@ function buildManifest() {
 }
 
 exports.default = series(clean, parallel(buildBackground, buildManifest));
+exports.build = parallel(buildBackground, buildManifest);
