@@ -1,4 +1,4 @@
-const { series, src, dest } = require('gulp');
+const { series, src, dest, parallel } = require('gulp');
 const log = require('fancy-log');
 const del = require('del');
 const Parcel = require('parcel-bundler');
@@ -19,4 +19,9 @@ function buildBackground() {
   return bundler.bundle();
 }
 
-exports.default = series(clean, buildBackground);
+function buildManifest() {
+  return src('src/manifest.json')
+    .pipe(dest('build/'));
+}
+
+exports.default = series(clean, parallel(buildBackground, buildManifest));
