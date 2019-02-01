@@ -1,7 +1,5 @@
 const browser = require('webextension-polyfill');
 
-console.log('Hello World');
-
 browser.menus.create({
   id: 'test1',
   title: 'Test 1',
