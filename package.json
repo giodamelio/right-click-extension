@@ -1,7 +1,7 @@
 {
   "name": "right-click-extension",
   "version": "0.1.0",
-  "description": "A function to allow custom searches based on selected text",
+  "description": "An extension to allow custom searches based on selected text",
   "private": true,
   "main": "index.js",
   "author": "Gio d'Amelio",
@@ -22,7 +22,8 @@
     "fancy-log": "^1.3.3",
     "gulp": "^4.0.0",
     "gulp-cli": "^2.0.1",
-    "parcel-bundler": "^1.11.0"
+    "parcel-bundler": "^1.11.0",
+    "web-ext": "^2.9.3"
   },
   "dependencies": {
     "webextension-polyfill": "^0.3.1"
