@@ -1,0 +1,20 @@
+{
+  "name": "right-click-extension",
+  "version": "0.1.0",
+  "description": "A function to allow custom searches based on selected text",
+  "private": true,
+  "main": "index.js",
+  "author": "Gio d'Amelio",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giodamelio/right-click-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/giodamelio/right-click-extension/issues"
+  },
+  "homepage": "https://github.com/giodamelio/right-click-extension#readme"
+}
