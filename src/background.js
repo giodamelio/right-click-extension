@@ -9,6 +9,21 @@ function getContextElementText(info, tab) {
   });
 }
 
+function matchRegexes(text, opener) {
+  if (!opener.regex) return [];
+
+  const decodedRegexes = opener.regex
+    .map(rawRegex => {
+      return new RegExp(decodeURIComponent(rawRegex));
+    })
+    .map(regex => {
+      return text.match(regex);
+    })
+    .filter(notNull => notNull);
+
+  return decodedRegexes;
+}
+
 // Add a menu item for each opener
 function addMenuItemsFromOpeners(
   openers,
@@ -18,11 +33,15 @@ function addMenuItemsFromOpeners(
 ) {
   browser.menus.removeAll();
 
-  console.log(matchesRegex);
-
   openers.forEach(opener => {
-    const regex = new RegExp(decodeURIComponent(opener.regex || '.*'));
-    if (matchesRegex && !regex.test(textToMatch)) return;
+    if (
+      matchesRegex &&
+      opener.regex &&
+      matchRegexes(textToMatch, opener).length === 0
+    ) {
+      return;
+    }
+
     browser.menus.create({
       id: opener.name,
       title: opener.name,
@@ -60,8 +79,7 @@ async function onShown(info, tab) {
     const matchingOpeners = openers
       .filter(opener => opener.regex)
       .map(opener => {
-        const regex = new RegExp(decodeURIComponent(opener.regex));
-        const regexMatch = text[0].match(regex);
+        const regexMatch = matchRegexes(text[0], opener);
         const matchedText = regexMatch ? regexMatch[0] : undefined;
 
         matchesHash[opener.name] = matchedText;
