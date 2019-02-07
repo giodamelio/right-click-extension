@@ -91,7 +91,9 @@ async function onShown(info, tab) {
       })
       .filter(opener => opener.matchedText);
 
-    addMenuItemsFromOpeners(matchingOpeners, ['page']);
+    if (matchingOpeners.length > 0) {
+      addMenuItemsFromOpeners(matchingOpeners, ['page']);
+    }
   } else if (info.contexts.includes('selection')) {
     addMenuItemsFromOpeners(openers, ['selection'], true, info.selectionText);
   }
