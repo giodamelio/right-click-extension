@@ -25,23 +25,10 @@ function matchRegexes(text, opener) {
 }
 
 // Add a menu item for each opener
-function addMenuItemsFromOpeners(
-  openers,
-  contexts,
-  matchesRegex = false,
-  textToMatch
-) {
+function addMenuItemsFromOpeners(openers, contexts) {
   browser.menus.removeAll();
 
   openers.forEach(opener => {
-    if (
-      matchesRegex &&
-      opener.regex &&
-      matchRegexes(textToMatch, opener).length === 0
-    ) {
-      return;
-    }
-
     browser.menus.create({
       id: opener.name,
       title: opener.name,
@@ -76,7 +63,7 @@ async function onShown(info, tab) {
 
     // Find openers who's regex matches the text
     matchesHash = {};
-    const matchingOpeners = openers
+    const validOpeners = openers
       .filter(opener => opener.regex)
       .map(opener => {
         const regexMatch = matchRegexes(text[0], opener);
@@ -91,11 +78,18 @@ async function onShown(info, tab) {
       })
       .filter(opener => opener.matchedText);
 
-    if (matchingOpeners.length > 0) {
-      addMenuItemsFromOpeners(matchingOpeners, ['page']);
+    if (validOpeners.length > 0) {
+      addMenuItemsFromOpeners(validOpeners, ['page']);
     }
   } else if (info.contexts.includes('selection')) {
-    addMenuItemsFromOpeners(openers, ['selection'], true, info.selectionText);
+    const validOpeners = openers.filter(opener => {
+      if (!opener.regex) return true;
+      return matchRegexes(info.selectionText, opener).length >= 1;
+    });
+
+    if (validOpeners.length > 0) {
+      addMenuItemsFromOpeners(validOpeners, ['selection']);
+    }
   }
 }
 
