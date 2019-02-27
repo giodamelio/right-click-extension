@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import builtins from 'rollup-plugin-node-builtins';
+import banner from 'rollup-plugin-banner';
 
 export default [
   {
@@ -18,7 +19,12 @@ export default [
       commonjs(),
 
       // Nodejs buildins shim
-      builtins()
+      builtins(),
+
+      // Add banner to compiled js
+      banner(
+        '<%= pkg.name %> version <%= pkg.version %>\nby <%= pkg.author %>\nFull source at <%= pkg.homepage %>'
+      )
     ]
   }
 ];
