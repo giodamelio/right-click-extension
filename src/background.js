@@ -109,8 +109,9 @@ async function onClicked(info, tab) {
       info.selectionText || matchesHash[info.menuItemId]
     );
     browser.tabs.create({
+      url,
       active: true,
-      url
+      index: tab.index + 1
     });
   }
 
