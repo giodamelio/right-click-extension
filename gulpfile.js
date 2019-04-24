@@ -18,6 +18,17 @@ function buildBackground() {
   return bundler.bundle();
 }
 
+function buildContentScript() {
+  const options = {
+    outDir: './build',
+    watch: false,
+    logLevel: 1
+  };
+  const bundler = new Parcel('src/content_script.js', options);
+
+  return bundler.bundle();
+}
+
 function buildOptions() {
   const options = {
     outDir: './build/options',
@@ -36,6 +47,11 @@ function buildManifest() {
 
 exports.default = series(
   clean,
-  series(buildBackground, buildManifest, buildOptions)
+  series(buildBackground, buildContentScript, buildManifest, buildOptions)
 );
-exports.build = series(buildBackground, buildManifest, buildOptions);
+exports.build = series(
+  buildBackground,
+  buildContentScript,
+  buildManifest,
+  buildOptions
+);
