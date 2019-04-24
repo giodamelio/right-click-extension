@@ -48,13 +48,15 @@ async function updateMenu(type, payload) {
 
   const { openers } = await browser.storage.local.get('openers');
 
-  const validOpeners = openers.filter(opener => {
-    if (!opener.regex) return true;
-    return matchRegexes(payload.selection, opener).length >= 1;
-  });
+  if (type === 'selection_change') {
+    const validOpeners = openers.filter(opener => {
+      if (!opener.regex) return true;
+      return matchRegexes(payload.text, opener).length >= 1;
+    });
 
-  if (validOpeners.length > 0) {
-    addMenuItemsFromOpeners(validOpeners, ['selection']);
+    if (validOpeners.length > 0) {
+      addMenuItemsFromOpeners(validOpeners, ['selection']);
+    }
   }
 }
 
@@ -92,7 +94,10 @@ browser.menus.onClicked.addListener((info, tab) => {
 browser.runtime.onMessage.addListener(function({ type, payload }) {
   console.info(`Background got message of type ${type}`, payload);
 
-  if (type === 'selection_change' && payload.selection.length > 0) {
+  if (
+    (type === 'selection_change' || type === 'right_click') &&
+    payload.text.length > 0
+  ) {
     return updateMenu(type, payload).catch(err => {
       console.error(err);
     });
