@@ -1,14 +1,6 @@
 const browser = require('webextension-polyfill');
 const util = require('util');
 
-// Get the text of an element based on a menu shown event
-function getContextElementText(info, tab) {
-  return browser.tabs.executeScript(tab.id, {
-    frameId: info.frameId,
-    code: `browser.menus.getTargetElement(${info.targetElementId}).innerText;`
-  });
-}
-
 function matchRegexes(text, opener) {
   if (!opener.regex) return [];
 
@@ -51,45 +43,18 @@ function addMenuItemsFromOpeners(openers, contexts) {
   browser.menus.refresh();
 }
 
-let matchesHash;
-async function onShown(info, tab) {
+async function updateMenu(type, payload) {
   browser.menus.removeAll();
 
   const { openers } = await browser.storage.local.get('openers');
 
-  if (info.contexts.includes('page')) {
-    // Get the text of the element that was right clicked on
-    const text = await getContextElementText(info, tab);
+  const validOpeners = openers.filter(opener => {
+    if (!opener.regex) return true;
+    return matchRegexes(payload.selection, opener).length >= 1;
+  });
 
-    // Find openers who's regex matches the text
-    matchesHash = {};
-    const validOpeners = openers
-      .filter(opener => opener.regex)
-      .map(opener => {
-        const regexMatch = matchRegexes(text[0], opener);
-        const matchedText = regexMatch ? regexMatch[0] : undefined;
-
-        matchesHash[opener.name] = matchedText;
-
-        return {
-          ...opener,
-          matchedText
-        };
-      })
-      .filter(opener => opener.matchedText);
-
-    if (validOpeners.length > 0) {
-      addMenuItemsFromOpeners(validOpeners, ['page']);
-    }
-  } else if (info.contexts.includes('selection')) {
-    const validOpeners = openers.filter(opener => {
-      if (!opener.regex) return true;
-      return matchRegexes(info.selectionText, opener).length >= 1;
-    });
-
-    if (validOpeners.length > 0) {
-      addMenuItemsFromOpeners(validOpeners, ['selection']);
-    }
+  if (validOpeners.length > 0) {
+    addMenuItemsFromOpeners(validOpeners, ['selection']);
   }
 }
 
@@ -104,10 +69,7 @@ async function onClicked(info, tab) {
 
   const opener = lookup[info.menuItemId];
   if (opener) {
-    const url = util.format(
-      opener.url,
-      info.selectionText || matchesHash[info.menuItemId]
-    );
+    const url = util.format(opener.url, info.selectionText);
     browser.tabs.create({
       url,
       active: true,
@@ -121,14 +83,18 @@ async function onClicked(info, tab) {
   }
 }
 
-browser.menus.onShown.addListener((info, tab) => {
-  return onShown(info, tab).catch(err => {
-    console.error(err);
-  });
-});
-
 browser.menus.onClicked.addListener((info, tab) => {
   return onClicked(info, tab).catch(err => {
     console.error(err);
   });
+});
+
+browser.runtime.onMessage.addListener(function({ type, payload }) {
+  console.info(`Background got message of type ${type}`, payload);
+
+  if (type === 'selection_change' && payload.selection.length > 0) {
+    return updateMenu(type, payload).catch(err => {
+      console.error(err);
+    });
+  }
 });
