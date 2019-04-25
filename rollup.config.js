@@ -2,6 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import builtins from 'rollup-plugin-node-builtins';
 import banner from 'rollup-plugin-banner';
+import copy from 'rollup-plugin-cpy';
 
 export default [
   {
@@ -24,7 +25,13 @@ export default [
       // Add banner to compiled js
       banner(
         '<%= pkg.name %> version <%= pkg.version %>\nby <%= pkg.author %>\nFull source at <%= pkg.homepage %>'
-      )
+      ),
+
+      // Build manifest
+      copy({
+        files: 'src/manifest.json',
+        dest: 'build/'
+      })
     ]
   }
 ];
