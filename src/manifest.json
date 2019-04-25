@@ -12,6 +12,6 @@
     }
   ],
   "options_ui": {
-    "page": "options/options.html"
+    "page": "options.html"
   }
 }
